@@ -9,19 +9,21 @@ app = Flask(__name__)
 ENDPOINT_NAME = "Custom-sklearn-model-2024-11-19-07-30-02"
 
 # Initialize AWS SageMaker runtime client
-sagemaker_runtime = boto3.client('sagemaker-runtime', region_name='ap-south-1')  # Replace 'your-region'
+sagemaker_runtime = boto3.client('sagemaker-runtime', region_name='ap-south-1')  # AWS Mumbai region
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     """
-    Home page with a form to input smartphone features and display the prediction result.
+    Home page route:
+    Displays the form for smartphone feature input
+    and shows prediction results with an image.
     """
     prediction_text = None
     prediction_image = 'placeholder.svg'
 
     if request.method == 'POST':
         try:
-            # Collect input data from the form - keeping original implementation
+            # Collect input data from form
             features = [
                 int(request.form['battery_power']),
                 int(request.form['blue']),
@@ -45,14 +47,14 @@ def index():
                 int(request.form['wifi']),
             ]
             
-            # Convert input data into the format expected by the model
-            payload = json.dumps([features])  # SageMaker expects JSON serialized input
+            # Convert input data into model's expected JSON format
+            payload_json = json.dumps([features])
             
             # Call SageMaker endpoint
             response = sagemaker_runtime.invoke_endpoint(
                 EndpointName=ENDPOINT_NAME,
                 ContentType="application/json",
-                Body=payload
+                Body=payload_json
             )
             
             # Parse the prediction response
@@ -85,6 +87,7 @@ def index():
 
 @app.route('/favicon.ico')
 def favicon():
+    """Serve the favicon for the application."""
     return send_from_directory('static', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 if __name__ == '__main__':
