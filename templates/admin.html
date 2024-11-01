@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Mobile Price Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--card-background);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stat-card h3 {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-card .change {
+            font-size: 0.875rem;
+            color: var(--success-color);
+            font-weight: 500;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .chart-card {
+            background: var(--card-background);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .chart-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .recent-activity {
+            background: var(--card-background);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .recent-activity h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-time {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .status-success {
+            background-color: #dcfce7;
+            color: #166534;
+        }
+
+        .status-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .refresh-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .refresh-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Admin Dashboard</h1>
+            <nav class="nav-links">
+                <a href="/">Home</a>
+                <a href="/admin">Dashboard</a>
+                <a href="/health">Health Check</a>
+            </nav>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Predictions</h3>
+                <div class="value" id="total-predictions">-</div>
+                <div class="change">+12% from last week</div>
+            </div>
+            <div class="stat-card">
+                <h3>Cache Hit Rate</h3>
+                <div class="value" id="cache-hit-rate">-</div>
+                <div class="change">+5% from last week</div>
+            </div>
+            <div class="stat-card">
+                <h3>Average Response Time</h3>
+                <div class="value" id="avg-response-time">-</div>
+                <div class="change">-8% from last week</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Sessions</h3>
+                <div class="value" id="active-sessions">-</div>
+                <div class="change">+3 from last hour</div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>Predictions by Category</h3>
+                <canvas id="category-chart" width="400" height="300"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Daily Prediction Volume</h3>
+                <canvas id="volume-chart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3>Recent Activity</h3>
+                <button class="refresh-btn" onclick="refreshData()">Refresh Data</button>
+            </div>
+            <div id="activity-list">
+                <div class="activity-item">
+                    <div class="activity-info">
+                        <div>New prediction request processed</div>
+                        <div class="activity-time">2 minutes ago</div>
+                    </div>
+                    <span class="status-badge status-success">Success</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-info">
+                        <div>Cache cleanup completed</div>
+                        <div class="activity-time">15 minutes ago</div>
+                    </div>
+                    <span class="status-badge status-success">Success</span>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-info">
+                        <div>SageMaker endpoint health check</div>
+                        <div class="activity-time">1 hour ago</div>
+                    </div>
+                    <span class="status-badge status-warning">Warning</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts
+        let categoryChart, volumeChart;
+
+        function initCharts() {
+            // Category distribution chart
+            const categoryCtx = document.getElementById('category-chart').getContext('2d');
+            categoryChart = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Budget', 'Lower Mid-range', 'Upper Mid-range', 'Premium'],
+                    datasets: [{
+                        data: [30, 25, 28, 17],
+                        backgroundColor: [
+                            '#10b981',
+                            '#3b82f6',
+                            '#f59e0b',
+                            '#ef4444'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+
+            // Daily volume chart
+            const volumeCtx = document.getElementById('volume-chart').getContext('2d');
+            volumeChart = new Chart(volumeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Predictions',
+                        data: [65, 78, 90, 81, 56, 55, 40],
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        async function refreshData() {
+            const refreshBtn = document.querySelector('.refresh-btn');
+            refreshBtn.classList.add('loading');
+            refreshBtn.textContent = 'Refreshing...';
+
+            try {
+                // Simulate API calls
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Update stats with mock data
+                document.getElementById('total-predictions').textContent = '1,247';
+                document.getElementById('cache-hit-rate').textContent = '78%';
+                document.getElementById('avg-response-time').textContent = '245ms';
+                document.getElementById('active-sessions').textContent = '12';
+
+                // Update charts with new data
+                categoryChart.data.datasets[0].data = [
+                    Math.floor(Math.random() * 50) + 20,
+                    Math.floor(Math.random() * 40) + 15,
+                    Math.floor(Math.random() * 45) + 20,
+                    Math.floor(Math.random() * 30) + 10
+                ];
+                categoryChart.update();
+
+                volumeChart.data.datasets[0].data = Array.from({length: 7}, () => 
+                    Math.floor(Math.random() * 100) + 20
+                );
+                volumeChart.update();
+
+                // Update activity list
+                updateActivityList();
+
+            } catch (error) {
+                console.error('Failed to refresh data:', error);
+            } finally {
+                refreshBtn.classList.remove('loading');
+                refreshBtn.textContent = 'Refresh Data';
+            }
+        }
+
+        function updateActivityList() {
+            const activityList = document.getElementById('activity-list');
+            const activities = [
+                { text: 'New prediction request processed', time: 'Just now', status: 'success' },
+                { text: 'Cache cleanup completed', time: '5 minutes ago', status: 'success' },
+                { text: 'Database backup completed', time: '1 hour ago', status: 'success' },
+                { text: 'SageMaker endpoint health check', time: '2 hours ago', status: 'warning' }
+            ];
+
+            activityList.innerHTML = activities.map(activity => `
+                <div class="activity-item">
+                    <div class="activity-info">
+                        <div>${activity.text}</div>
+                        <div class="activity-time">${activity.time}</div>
+                    </div>
+                    <span class="status-badge status-${activity.status}">${
+                        activity.status === 'success' ? 'Success' : 
+                        activity.status === 'warning' ? 'Warning' : 'Error'
+                    }</span>
+                </div>
+            `).join('');
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+            refreshData();
+        });
+    </script>
+</body>
+</html> 
