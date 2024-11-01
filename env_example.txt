@@ -1,0 +1,16 @@
+# Environment variables for Mobile Price Predictor
+# Copy this file to .env and fill in your actual values
+
+# Flask Configuration
+FLASK_DEBUG=False
+SECRET_KEY=your-secret-key-here
+
+# AWS Configuration
+AWS_REGION=ap-south-1
+SAGEMAKER_ENDPOINT=Custom-sklearn-model-2024-11-19-07-30-02
+
+# Logging
+LOG_LEVEL=INFO
+
+# Application Settings
+MAX_CONTENT_LENGTH=16777216 
