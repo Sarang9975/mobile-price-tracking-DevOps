@@ -1,6 +1,11 @@
 from flask import Flask, request, render_template, send_from_directory
 import boto3
 import json
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -23,6 +28,7 @@ def index():
 
     if request.method == 'POST':
         try:
+            logger.info("Processing prediction request")
             # Collect input data from form
             features = [
                 int(request.form['battery_power']),
@@ -47,6 +53,10 @@ def index():
                 int(request.form['wifi']),
             ]
             
+            # Validate input features
+            if any(f < 0 for f in features):
+                raise ValueError("All features must be non-negative")
+            
             # Convert input data into model's expected JSON format
             payload_json = json.dumps([features])
             
@@ -59,6 +69,7 @@ def index():
             
             # Parse the prediction response
             prediction = json.loads(response['Body'].read().decode())[0]
+            logger.info(f"Prediction received: {prediction}")
             
             # Map prediction result to human-readable text and corresponding image
             if prediction == 0:
@@ -77,7 +88,12 @@ def index():
                 prediction_text = "Unknown prediction result"
                 prediction_image = "placeholder.svg"
         
+        except ValueError as ve:
+            logger.error(f"Validation error: {ve}")
+            prediction_text = f"Input validation error: {ve}"
+            prediction_image = "placeholder.svg"
         except Exception as e:
+            logger.error(f"Prediction error: {e}")
             prediction_text = f"Error: {e}"
             prediction_image = "placeholder.svg"
 
