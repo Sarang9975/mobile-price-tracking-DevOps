@@ -1,74 +1,102 @@
-# Smartphone Price Predictor
+# Mobile Price Predictor using AWS SageMaker
 
-A web application that predicts smartphone price ranges using a machine learning model deployed on [AWS SageMaker](https://aws.amazon.com/sagemaker/).
+A Flask web application that predicts mobile phone price categories using a machine learning model deployed on AWS SageMaker.
 
 ## Features
 
-- Predicts smartphone price range in 4 categories:
-  - Budget mobile phone
-  - Lower mid-range phone
-  - Upper mid-range phone.
-  - Premium phone.
-- Interactive web interface with real-time predictions.
-- Responsive design that works on desktop and mobile devices
-- Handles 20 different smartphone specifications for prediction
+- **Smartphone Price Classification**: Predicts if a phone is Budget, Lower Mid-range, Upper Mid-range, or Premium
+- **Interactive Web Interface**: User-friendly form for inputting phone specifications
+- **AWS SageMaker Integration**: Uses deployed ML model for real-time predictions
+- **Input Validation**: Comprehensive validation of user inputs
+- **Error Handling**: Robust error handling with detailed logging
+- **Responsive Design**: Modern, mobile-friendly UI
 
-## Tech Stack
+## Recent Updates
 
-- **Frontend**: HTML, CSS, JavaScript
-- **Backend**: [Flask](https://flask.palletsprojects.com/en/2.2.x/) (Python)
-- **ML Model Deployment**: [AWS SageMaker](https://aws.amazon.com/sagemaker/)
-- **AWS Services**: AWS Sagemaker, AWS S3, AWS IAM, AWS CLI
+### v2.1.0 - Enhanced Error Handling & Validation
+- Added comprehensive input validation for all features
+- Implemented structured logging throughout the application
+- Added feature range validation (battery power, RAM, clock speed)
+- Improved error messages and user feedback
 
-## Prerequisites
-
-- Python 3.x
-- [AWS Account](https://aws.amazon.com/) with appropriate credentials
-- [Boto3 library](https://boto3.amazonaws.com/)
-- [Flask](https://flask.palletsprojects.com/en/2.2.x/)
+### v2.0.0 - Code Refactoring & Configuration
+- Separated configuration into dedicated config.py module
+- Created utility functions for data validation and preprocessing
+- Added type hints for better code maintainability
+- Updated dependencies to latest stable versions
 
 ## Installation
 
-1. Clone the repository
+1. Clone the repository:
 ```bash
-git clone https://github.com/souradeepdutta/Mobile-Price-Predictor-using-AWS-Sagemaker.git
-cd smartphone-price-predictor
+git clone <repository-url>
+cd Mobile-Price-Predictor-using-AWS-Sagemaker
 ```
 
-2. Install required packages
+2. Install dependencies:
 ```bash
-pip install flask boto3
+pip install -r requirements.txt
 ```
 
-3. Configure AWS credentials
+3. Set environment variables (optional):
 ```bash
-aws configure
-AWS_ACCESS_KEY_ID='your-access-key'
-AWS_SECRET_ACCESS_KEY='your-secret-key'
-AWS_REGION='ap-south-1'
+export AWS_REGION=ap-south-1
+export SAGEMAKER_ENDPOINT=your-endpoint-name
+export FLASK_DEBUG=True
 ```
 
-## Usage
-
-1. Start the Flask application:
+4. Run the application:
 ```bash
 python app.py
 ```
 
-2. Open a web browser and navigate to `http://localhost:5000`
+## Usage
 
-3. Enter the smartphone specifications in the form:
-   - Basic specifications (RAM, storage, processor, etc.)
-   - Camera details
-   - Screen specifications
-   - Additional features (Bluetooth, WiFi, etc.)
+1. Open your browser and navigate to `http://localhost:80`
+2. Fill in the smartphone specifications form
+3. Click "Predict Price Category" to get the result
+4. View the prediction with corresponding category image
 
-4. Click "Predict Price Range" to get the prediction
+## Model Features
 
-## Screenshots
+The model accepts 20 features including:
+- Battery Power (mAh)
+- Bluetooth support
+- Clock Speed (GHz)
+- Dual SIM support
+- Front Camera (MP)
+- 4G support
+- Internal Memory (GB)
+- Mobile Weight (g)
+- Number of Cores
+- Primary Camera (MP)
+- Pixel Resolution
+- RAM (MB)
+- Screen Dimensions
+- Talk Time (hours)
+- 3G support
+- Touch Screen
+- WiFi support
 
-![Smartphone Price Predictor Interface](./screenshot.png)
-*Smartphone Price Predictor Web Interface*
+## Architecture
+
+- **Frontend**: HTML/CSS with responsive design
+- **Backend**: Flask web framework
+- **ML Model**: AWS SageMaker endpoint
+- **Validation**: Custom validation utilities
+- **Configuration**: Environment-based configuration management
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 
 
