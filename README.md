@@ -9,7 +9,7 @@ A web application that predicts smartphone price ranges using a machine learning
   - Lower mid-range phone
   - Upper mid-range phone
   - Premium phone
-- Interactive web interface with real-time predictions
+- Interactive web interface with real-time predictions.
 - Responsive design that works on desktop and mobile devices
 - Handles 20 different smartphone specifications for prediction
 
